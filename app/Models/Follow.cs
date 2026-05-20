@@ -7,9 +7,9 @@ namespace app.Models
 {
     public class Follow
     {
-        public int Id { get; set; }
-        public int FollowerId { get; set; }
-        public int FollowingId { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid FollowerId { get; set; }
+        public Guid FollowingId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public User Follower { get; set; } = null!;
