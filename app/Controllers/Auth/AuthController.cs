@@ -54,6 +54,7 @@ namespace app.Controllers
 
             return Ok(ApiResponse<AuthResponseDto>.Ok(new AuthResponseDto
             {
+                UserId = user.Id,
                 Token = GenerateToken(user),
                 Username = user.Username,
                 Email = user.Email
