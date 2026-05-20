@@ -22,7 +22,7 @@ namespace app.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            // Sequential GUIDs — avoids index fragmentation on SQL Server
+            // Sequential GUIDs
             builder.Entity<User>().Property(u => u.Id).HasDefaultValueSql("NEWSEQUENTIALID()");
             builder.Entity<Post>().Property(p => p.Id).HasDefaultValueSql("NEWSEQUENTIALID()");
             builder.Entity<Like>().Property(l => l.Id).HasDefaultValueSql("NEWSEQUENTIALID()");
@@ -35,25 +35,51 @@ namespace app.Data
             builder.Entity<Like>().HasIndex(l => new { l.UserId, l.PostId }).IsUnique();
             builder.Entity<Follow>().HasIndex(f => new { f.FollowerId, f.FollowingId }).IsUnique();
 
-            // Follow self-referencing relationships\
+            // Follow self-referencing
             builder.Entity<Follow>()
-            .HasOne(f => f.Follower)
-            .WithMany(u => u.Following)
-            .HasForeignKey(f => f.FollowerId)
-            .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(f => f.Follower)
+                .WithMany(u => u.Following)
+                .HasForeignKey(f => f.FollowerId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<Follow>()
-            .HasOne(f => f.Following)
-            .WithMany(u => u.Followers)
-            .HasForeignKey(f => f.FollowingId)
-            .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(f => f.Following)
+                .WithMany(u => u.Followers)
+                .HasForeignKey(f => f.FollowingId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             // Comment self-referencing
             builder.Entity<Comment>()
                 .HasOne(c => c.ParentComment)
                 .WithMany(c => c.Replies)
                 .HasForeignKey(c => c.ParentCommentId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Comment cascade fix
+            builder.Entity<Comment>()
+                .HasOne(c => c.Post)
+                .WithMany(p => p.Comments)
+                .HasForeignKey(c => c.PostId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Comment>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Like cascade fix
+            builder.Entity<Like>()
+                .HasOne(l => l.Post)
+                .WithMany(p => p.Likes)
+                .HasForeignKey(l => l.PostId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Like>()
+                .HasOne(l => l.User)
+                .WithMany(u => u.Likes)
+                .HasForeignKey(l => l.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
