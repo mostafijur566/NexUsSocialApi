@@ -46,7 +46,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Repositories
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
-
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 // Services
 builder.Services.AddScoped<app.Services.FileService>();
 
